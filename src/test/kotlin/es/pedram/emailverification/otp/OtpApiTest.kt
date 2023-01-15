@@ -38,4 +38,26 @@ class OtpApiTest : BaseComponentTest() {
         )
         Assertions.assertThat(response2.statusCode).isEqualTo(HttpStatus.OK)
     }
+
+    @Test
+    fun `test verifying invalid verification-code`() {
+        every { randomGenerator.nextString() } returns "1234"
+        every { otpSender.send("foo@bar.com", "1234") } answers {}
+        val response1 = restTemplate.postForEntity(
+            "/api/users/otp",
+            mapOf("email" to "foo@bar.com"),
+            Any::class.java
+        )
+        Assertions.assertThat(response1.statusCode).isEqualTo(HttpStatus.OK)
+
+        val response2 = restTemplate.postForEntity(
+            "/api/users/otp-verification",
+            mapOf(
+                "email" to "foo@bar.com",
+                "code" to "wrong",
+            ),
+            Any::class.java
+        )
+        Assertions.assertThat(response2.statusCode).isEqualTo(HttpStatus.FORBIDDEN)
+    }
 }
