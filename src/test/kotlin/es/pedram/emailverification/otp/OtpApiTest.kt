@@ -19,14 +19,14 @@ class OtpApiTest : BaseComponentTest() {
 
     @Test
     fun `test sending and verifying verification-code`() {
+        every { randomGenerator.nextString() } returns "1234"
+        every { otpSender.send("foo@bar.com", "1234") } answers {}
         val response1 = restTemplate.postForEntity(
             "/api/users/otp",
             mapOf("email" to "foo@bar.com"),
             Any::class.java
         )
         Assertions.assertThat(response1.statusCode).isEqualTo(HttpStatus.OK)
-        every { otpSender.send("foo@bar.com", "1234") } answers {}
-        every { randomGenerator.nextString() } returns "1234"
 
         val response2 = restTemplate.postForEntity(
             "/api/users/otp-verification",
