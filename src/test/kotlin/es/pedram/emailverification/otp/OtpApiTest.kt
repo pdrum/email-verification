@@ -1,12 +1,22 @@
 package es.pedram.emailverification.otp
 
+import com.ninjasquad.springmockk.MockkBean
 import es.pedram.emailverification.BaseComponentTest
+import es.pedram.emailverification.otp.models.OtpSender
+import es.pedram.emailverification.otp.models.RandomGenerator
+import io.mockk.every
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 
 
-class OtpApiTest: BaseComponentTest() {
+class OtpApiTest : BaseComponentTest() {
+    @MockkBean
+    private lateinit var otpSender: OtpSender
+
+    @MockkBean
+    private lateinit var randomGenerator: RandomGenerator
+
     @Test
     fun `test sending and verifying verification-code`() {
         val response1 = restTemplate.postForEntity(
@@ -15,6 +25,8 @@ class OtpApiTest: BaseComponentTest() {
             Any::class.java
         )
         Assertions.assertThat(response1.statusCode).isEqualTo(HttpStatus.OK)
+        every { otpSender.send("foo@bar.com", "1234") } answers {}
+        every { randomGenerator.nextString() } returns "1234"
 
         val response2 = restTemplate.postForEntity(
             "/api/users/otp-verification",
