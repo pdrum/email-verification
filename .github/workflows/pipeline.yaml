@@ -68,7 +68,7 @@ jobs:
           target: /etc/email-verification.jar
 
       - name: Run JAR
-        uses: actions/ssh-action@v1
+        uses: appleboy/ssh-action@v0.1.7
         with:
           host: ${{ secrets.SERVER_IP }}
           username: ${{ secrets.SERVER_USERNAME }}
