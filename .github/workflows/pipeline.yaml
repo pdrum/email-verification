@@ -59,7 +59,7 @@ jobs:
           name: artifact
 
       - name: Deploy JAR
-        uses: appleboy/scp-action@v1
+        uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.SERVER_IP }}
           username: ${{ secrets.SERVER_USERNAME }}
